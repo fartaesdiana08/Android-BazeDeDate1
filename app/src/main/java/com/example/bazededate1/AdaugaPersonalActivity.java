@@ -64,6 +64,10 @@ public class AdaugaPersonalActivity extends AppCompatActivity {
                     PersonalMedical personal = new PersonalMedical(txt_nume,txt_functie,txt_nr_ore_lucr,txt_ora_tura,txt_ang_vechi);
                     Intent intent = new Intent();
                     intent.putExtra("adaugaPersonal", personal);
+                    //pt baza de date
+                    PersonalDB personalDB=PersonalDB.getInstanta(getApplicationContext());
+                    personalDB.getPersonalDao().insert(personal);
+                    //
                     setResult(RESULT_OK, intent);
                     finish();
                 }

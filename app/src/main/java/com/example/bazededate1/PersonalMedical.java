@@ -1,8 +1,22 @@
 package com.example.bazededate1;
 
+import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
+
 import java.io.Serializable;
 
+@Entity(tableName = "personal")
 public class PersonalMedical implements Serializable {
+
+    @PrimaryKey(autoGenerate = true)
+    private int id;
+    public int getId() {
+        return id;
+    }
+    public void setId(int id) {
+        this.id = id;
+    }
 
     private String nume;
     private String functie;
@@ -10,7 +24,17 @@ public class PersonalMedical implements Serializable {
     private int oraTura; //timepick
     private boolean angajatVechi; //checkbox
 
+    @Ignore
     public PersonalMedical(String nume, String functie, int nrOreLucrate, int oraTura, boolean angajatVechi) {
+        this.nume = nume;
+        this.functie = functie;
+        this.nrOreLucrate = nrOreLucrate;
+        this.oraTura = oraTura;
+        this.angajatVechi = angajatVechi;
+    }
+
+    public PersonalMedical(int id, String nume, String functie, int nrOreLucrate, int oraTura, boolean angajatVechi) {
+        this.id = id;
         this.nume = nume;
         this.functie = functie;
         this.nrOreLucrate = nrOreLucrate;

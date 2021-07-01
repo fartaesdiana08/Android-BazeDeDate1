@@ -2,8 +2,10 @@ package com.example.bazededate1;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.room.Room;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -23,6 +25,11 @@ public class MainActivity extends AppCompatActivity {
     //pt adapter
     List<PersonalMedical> listaPersonal = new ArrayList<PersonalMedical>();
     ArrayAdapter adapter;
+
+    //baze de date
+    public static PersonalDB DB;
+    PersonalDB personalDB;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +53,22 @@ public class MainActivity extends AppCompatActivity {
             adapter = new ArrayAdapter<PersonalMedical>(getApplicationContext(), android.R.layout.simple_list_item_1, listaPersonal);
             listView.setAdapter(adapter);
         }
+
+        //baza de date
+        DB = Room.databaseBuilder(getApplicationContext(), PersonalDB.class, "personal.db")
+                .allowMainThreadQueries().fallbackToDestructiveMigration().build();
+
+        //pt baza de date
+        GetAll getAll = new GetAll(){
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                super.onPostExecute(aVoid);
+                adapter = new ArrayAdapter<PersonalMedical>(getApplicationContext(), android.R.layout.simple_expandable_list_item_1,listaPersonal);
+                listView.setAdapter(adapter);
+
+            }
+        };
+        getAll.execute();
     }
 
     @Override
@@ -60,6 +83,32 @@ public class MainActivity extends AppCompatActivity {
                 ArrayAdapter<PersonalMedical> adapter1 = new ArrayAdapter<PersonalMedical>(getApplicationContext(), android.R.layout.simple_list_item_1, listaPersonal);
                 listView.setAdapter(adapter1);
             }
+        }
+    }
+    public class GetAll extends AsyncTask<Void,Void,Void> {
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            personalDB = PersonalDB.getInstanta(getApplicationContext());
+            listaPersonal.addAll(personalDB.getPersonalDao().getAll());
+            return null;
+        }
+    }
+
+    //baza de date
+    public class Insert extends AsyncTask<PersonalMedical,Void,Void> {
+
+        @Override
+        protected Void doInBackground(PersonalMedical... personals) {
+            personalDB = PersonalDB.getInstanta(getApplicationContext());
+            personalDB.getPersonalDao().insert(personals[0]);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            Toast.makeText(MainActivity.this, "inserat", Toast.LENGTH_SHORT).show();
         }
     }
 }
